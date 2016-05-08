@@ -1,9 +1,8 @@
 #!/bin/bash
 
-#https://github.com/zbigniewczarnecki/menedzerpostepowtreningowych.git
-
 WWW_PATH=~/WWW/
 APACHE2_SITES_PATH=/etc/apache2/sites-available/
+USER=reyzeer
 
 cd $WWW_PATH
 
@@ -12,7 +11,7 @@ read gitaddress
 
 dirName=`expr "$gitaddress" : '^https:\/\/github\.com\/.[a-z0-9]*\/\(.[a-z0-9]*\)\.git$'`
 
-git clone $gitaddress
+sudo -u $USER git clone $gitaddress
 
 echo "Get names of modules (separate by ;):"
 read modules
@@ -22,7 +21,8 @@ modules="frontend;backend"
 modules=$(echo $modules | tr ";" "\n")
 for module in $modules
 do
-	sudo echo "127.0.0.1	 ${dirName}-${module}.loc" >> /etc/hosts
+
+	echo "127.0.0.1	 ${dirName}-${module}.loc" >> /etc/hosts
 	read -r -d '' vhosts << EOM
 
 <VirtualHost *:80>
@@ -66,22 +66,24 @@ do
 # vim: syntax=apache ts=4 sw=4 sts=4 sr noet
 
 EOM
-	sudo echo "${vhosts}" >> ${APACHE2_SITES_PATH}${dirName}-${module}.conf
-	sudo a2ensite ${dirName}-${module}
+	echo "${vhosts}" >> ${APACHE2_SITES_PATH}${dirName}-${module}.conf
+	a2ensite ${dirName}-${module}
 
-	mkdir ${WWW_PATH}${dirName}/${module}/runtime
-	mkdir ${WWW_PATH}${dirName}/${module}/web/assets
+	sudo -u $USER mkdir ${WWW_PATH}${dirName}/${module}/runtime
+	sudo -u $USER mkdir ${WWW_PATH}${dirName}/${module}/web/assets
 
 done
 
-mkdir ${WWW_PATH}${dirName}/common/runtime
-mkdir ${WWW_PATH}${dirName}/common/web/assets
+sudo -u $USER mkdir ${WWW_PATH}${dirName}/common/runtime
+
+chgrp -R www-data ${WWW_PATH}${dirName}
+chmod -R g+rwx ${WWW_PATH}${dirName}
 
 cd ${WWW_PATH}${dirName}
 
-php init
-composer update
+sudo -u $USER php init
+sudo -u $USER composer update
 
-sudo service apache2 restart
+service apache2 restart
 
 
