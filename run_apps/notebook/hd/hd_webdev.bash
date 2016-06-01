@@ -1,8 +1,8 @@
 #!/bin/bash
 
 MONITOR0=0
-MONITOR1=2020
-MONITOR2=4040
+MONITOR1=1720
+MONITOR2=3400
 
 function setWindow
 {
