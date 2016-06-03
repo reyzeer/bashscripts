@@ -17,3 +17,20 @@ apt-get install libapache2-mod-php
 apt-get install php-mcrypt
 apt-get install php-mbstring
 
+#node/npm
+apt-get install nodejs-legacy
+apt-get install npm
+npm install apidoc -g
+
+#npm
+#apt-get install build-essential curl git m4 ruby texinfo libbz2-dev libcurl4-#openssl-dev libexpat-dev libncurses-dev zlib1g-dev
+
+#apt install linuxbrew-wrapper
+
+#brew install node
+
+#export PATH="$HOME/.linuxbrew/bin:$PATH"
+#export MANPATH="$HOME/.linuxbrew/share/man:$MANPATH"
+#export INFOPATH="$HOME/.linuxbrew/share/info:$INFOPATH"
+
+
