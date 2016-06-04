@@ -1,7 +1,9 @@
 #!/bin/bash
 
+
+
 # --------------------- #
-#	Settings	#
+#         Settings	    #
 # --------------------- #
 
 WWW_PATH=~/WWW
@@ -13,121 +15,17 @@ CMD_USR="sudo -u ${USER}"
 CMD_ROOT="sudo"
 
 # --------------------- #
-#	Funcs		#
+#	        Funcs		      #
 # --------------------- #
-
-# --- repository ---
-
-# $1 - string - svn checkout address
-function repository_cloneGIT
-{
-	$CMD_USR git clone $1
-}
-
-# $1 - string - git clone address
-function repository_cloneSVN
-{
-	$CMD_USR svn checkout $1
-}
-
-# $1 - integer - select repo type ( 1 - git | 2 - svn )
-# $2 - string - git/svn clone/checkout address
-function repository_select
-{
-
-	case "$1" in
-		1) #git
-			repository_cloneGIT $2
-		;;
-		2) #svn
-			repository_cloneSVN $2
-		;;
-		*)
-			echo "You choose wrong repo type!"
-			exit
-		;;
-	esac
-
-}
-
-# $1 - integer - select repo type ( 1 - git | 2 - svn )
-# $2 - string - git/svn clone/checkout address
-function repository_clone
-{
-	cd $WWW_PATH
-	repository_select $1 $2
-}
-
-# --- path ---
-
-# $1 - string - github address
-function path_getRepoDirGithub
-{
-	echo `expr "$1" : '^https:\/\/github\.com\/.[a-z0-9]*\/\(.[a-z0-9]*\)\.git$'`
-}
-
-# $1 - string - project.coop-svn address
-function path_getRepoDirProjectcoopSVN
-{
-        echo `expr "$1" : '^https:\/\/svn\.project\.coop\/svn\/\(.[a-z0-9]*\)$'`
-}
-
-# $1 - integer - repository link type ( 1 - github | 2 - project.coop-svn )
-# $2 - string - address
-function path_getRepoDir
-{
-
-	case "$1" in
-                1) #github
-                	dirName=$(path_getRepoDirGithub $2) 
-                ;;  
-                2) #project.coop-svn
-                	dirName=$(path_getRepoDirProjectcoopSVN $2)
-                ;;  
-        esac
-
-	echo $dirName
-
-}
 
 # --- ch* ---
 
 # $1 - string path
 function ch_addWww
 {
+
 	$CMD_ROOT chgrp -R www-data $1
 	$CMD_ROOT chmod g+rwx $1
-}
-
-# --- frameworks ---
-
-function framework_yii2
-{
-	$CMD_USR php init
-	$CMD_USR composer update
-}
-
-function framework_onlyComposer
-{
-	$CMD_USR composer update
-}
-
-# $1 - integer - check framework ( 1 - Yii2.0 | 2 - Only Composer )
-# $2 - string - dir with project
-function framework_choose
-{
-
-	cd $2
-
-	case "$1" in
-		1) #Yii2.0
-			framework_yii2	
-		;;
-		2) #Only Composer
-			framework_onlyComposer
-		;;
-	esac
-
 }
 
 # --- Add domain hosts&apache2 ---
@@ -151,7 +49,7 @@ function addDomain_add2hosts
 # $2 - string - path to root
 function addDomain_add2apache
 {
-	
+
 	read -r -d '' vhosts << EOM
 
 <VirtualHost *:80>
@@ -206,7 +104,7 @@ function addDomain_do
 
 	isAll="n"
 	while [ "$isAll" != "y" ]; do
-		
+
 		# get dir for once www root (yii may has some of roots f.e. frontend, backend)
 		dirIsOk="n"
 		while [ "$dirIsOk" != "y" ]; do
@@ -219,8 +117,8 @@ function addDomain_do
 			echo "Path $rootDir is ok?[y/n]"
 			read dirIsOk
 		done
-	
-                # domainMe 
+
+                # domainMe
                 domainIsOk="n"
                 while [ "$dirIsOk" != "y" ]; do
 
@@ -241,34 +139,76 @@ function addDomain_do
 		read isAll
 
 	done
-	
+
 }
 
 # --------------------- #
-#	main		#
+#	        main          #
 # --------------------- #
 
-echo "Choose repository type (git - [1] / svn - [2]):"
-read repoTypeSelect
+attrs()
+{
+  while [[ $# > 1 ]]
+  do
+    key="$1"
+    case $key in
+        -rt|--repositoryType)
+          repositoryType="$2"
+          shift # past argument
+        ;;
+        -ru|--repositoryUrl)
+          repositoryUrl="$2"
+          shift # past argument
+        ;;
+        -ut|--urlType)
+          urlType="$2"
+          shift # past argument
+        ;;
+        *)
+          # unknown option
+        ;;
+    esac
+    shift # past argument or value
+  done
+}
 
-echo "Get repository address:"
-read repoAddress
+main()
+{
 
-echo "Choose repository link type (github - [1] / project.coop-svn - [2]):"
-read repoLinkTypeSelect
+  #bash repository.bash -U $USER -w $WWW_PATH -t $repositoryType -u $repositoryUrl
 
-repository_clone $repoTypeSelect $repoAddress
-dirName=$(path_getRepoDir $repoLinkTypeSelect $repoAddress)
-dir=${WWW_PATH}/${dirName}
+  dirName=$(bash path.bash -t $urlType -u $repositoryUrl)
+  dir=${WWW_PATH}/${dirName}
 
-ch_addWww $dir
+  bash framework.bash -U $USER -
 
-printf "Choose framework:\n1. Yii2.0\n2. Only Composer\n0. None\n"
-read selectFramework
+  echo $dir
 
-framework_choose $selectFramework
+  # echo "Choose repository type (git - [1] / svn - [2]):"
+  # read repoTypeSelect
+  #
+  # echo "Get repository address:"
+  # read repoAddress
+  #
+  # echo "Choose repository link type (github - [1] / project.coop-svn - [2]):"
+  # read repoLinkTypeSelect
+  #
+  # repository_clone $repoTypeSelect $repoAddress
+  # dirName=$(path_getRepoDir $repoLinkTypeSelect $repoAddress)
+  # dir=${WWW_PATH}/${dirName}
+  #
+  # ch_addWww $dir
+  #
+  # printf "Choose framework:\n1. Yii2.0\n2. Only Composer\n0. None\n"
+  # read selectFramework
+  #
+  # framework_choose $selectFramework
+  #
+  # addDomain_do $dir
+  #
+  # echo "Finish."
 
-addDomain_do $dir
+}
 
-echo "Finish."
-
+attrs $@
+main
