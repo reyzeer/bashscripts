@@ -46,21 +46,25 @@ function getRepoDir
 
 attrs()
 {
-  while [[ $# > 1 ]]
+  while [[ $# > 0 ]]
   do
     key="$1"
     case $key in
-				-t|--type)
-        	type="$2"
-        	shift # past argument=value
-        ;;
-        -u|--url)
-        	url="$2"
-        	shift # past argument=value
-        ;;
-        *)
-          # unknown option
-        ;;
+      "-h"|"--help")
+				cat path.md
+				exit
+			;;
+			-t|--type)
+      	type="$2"
+      	shift # past argument=value
+      ;;
+      -u|--url)
+      	url="$2"
+      	shift # past argument=value
+      ;;
+      *)
+        # unknown option
+      ;;
     esac
     shift # past argument or value
   done

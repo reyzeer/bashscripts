@@ -1,11 +1,11 @@
 #!/bin/bash
 
+CMD_USR="sudo -u ${USER}"
+CMD_ROOT="sudo"
+
 # --------------------- #
 #         Settings	    #
 # --------------------- #
-
-CMD_USR="sudo -u ${USER}"
-CMD_ROOT="sudo"
 
 # --------------------- #
 #	        Funcs		      #
@@ -71,8 +71,8 @@ attrs()
       	url="$2"
       	shift # past argument=value
       ;;
-			-w|--where)
-				where="$2"
+			-d|--dir)
+				dir="$2"
 				shift # past argument=value
 			;;
       *)
@@ -86,11 +86,12 @@ attrs()
 run()
 {
 
-	cd $where
+	cd $dir
 	clone $type $url
 
 	#return
 		#null
+
 }
 
 attrs $@

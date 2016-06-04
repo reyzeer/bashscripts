@@ -1,17 +1,15 @@
 #!/bin/bash
 
-# --------------------- #
-#         Settings	    #
-# --------------------- #
-
 CMD_USR="sudo -u ${USER}"
 CMD_ROOT="sudo"
 
 # --------------------- #
-#	        Funcs		      #
+#         Settings	    #
 # --------------------- #
 
-# --- path ---
+# --------------------- #
+#	        Funcs		      #
+# --------------------- #
 
 # --- frameworks ---
 
@@ -37,7 +35,7 @@ function doInitFramework
 		"yii2_advanced") #Yii2.0
 			yii2
 		;;
-		"onlyComposer")
+		"only_composer")
 			onlyComposer
 		;;
 	esac
@@ -50,10 +48,14 @@ function doInitFramework
 
 attrs()
 {
-  while [[ $# > 1 ]]
+  while [[ $# > 0 ]]
   do
     key="$1"
     case $key in
+      "-h"|"--help")
+				cat framework.md
+				exit
+			;;
       -U|--user)
         user="$2"
         shift # past argument

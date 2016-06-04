@@ -175,7 +175,7 @@ attrs()
 main()
 {
 
-  #bash repository.bash -U $USER -w $WWW_PATH -t $repositoryType -u $repositoryUrl
+  bash repository.bash -U $USER -d $WWW_PATH -t $repositoryType -u $repositoryUrl
 
   dirName=$(bash path.bash -t $urlType -u $repositoryUrl)
   dir=${WWW_PATH}/${dirName}
