@@ -18,4 +18,4 @@
 
 ## Return
 
-`string` - name of clone/checkout catalog
+`null`

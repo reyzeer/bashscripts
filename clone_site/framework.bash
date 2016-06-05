@@ -13,20 +13,20 @@ CMD_ROOT="sudo"
 
 # --- frameworks ---
 
-function yii2
+yii2()
 {
 	$CMD_USR php init
 	$CMD_USR composer update
 }
 
-function onlyComposer
+onlyComposer()
 {
 	$CMD_USR composer update
 }
 
 # $1 - string|integer - check framework ( 1 - Yii2.0 | 2 - Only Composer )
 # $2 - string - dir with project
-function doInitFramework
+doInitFramework()
 {
 
 	cd $2
@@ -67,6 +67,7 @@ attrs()
       -m|--modules)
         modules="$2"
         shift # past argument=value
+      ;;
       -d|--dir)
       	dir="$2"
       	shift # past argument=value
