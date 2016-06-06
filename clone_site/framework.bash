@@ -15,6 +15,9 @@ CMD_ROOT="sudo"
 
 yii2()
 {
+
+	
+
 	$CMD_USR php init
 	$CMD_USR composer update
 }

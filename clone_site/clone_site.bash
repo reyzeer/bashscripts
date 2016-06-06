@@ -45,6 +45,10 @@ attrs()
           framework="$2"
           shift # past argument
         ;;
+        -fd|--frameworkDir)
+          frameworkDir="$2"
+          shift # past argument
+        ;;
         -m|--modules)
           modules="$2"
           shift # past argument
@@ -64,12 +68,36 @@ attrs()
 main()
 {
 
+  printf "
+    Linux user:\t\t$USER
+    Clone/checkout in:\t$WWW_PATH
+    Repository type:\t$repositoryType
+    Repository utl:\t$repositoryUrl
+    Url type:\t$urlType
+    Framework:\t$framework
+    Framework (relative) dir:\t$frameworkDir
+    Yii2 modules:\t$modules
+    Domains:\t$domains
+    \n"
+
+  echo "All is ok?[y/n]"
+  read isOk
+
+  if [ "$isOk" != "y" ]
+  then
+    exit
+  fi
+
+  echo "isOk ;)"
+
+  exit
+
   bash repository.bash -U $USER -d $WWW_PATH -t $repositoryType -u $repositoryUrl
 
   dirName=$(bash path.bash -t $urlType -u $repositoryUrl)
   dir=${WWW_PATH}/${dirName}
 
-  bash framework.bash -U $USER -f $framework -m $modules -d $dir
+  bash framework.bash -U $USER -f $framework -m $modules -d ${dir}${frameworkDir}
 
   bash add_domain.bash -U $USER -di $dir -do $domains
 

@@ -14,6 +14,10 @@
 - `-d | --dir` - dir to main project catalog
 - `-do | --domains` - list of domains with path [ example: `"domain.loc,/;domain-admin.loc,/admin"`, "" is requirements ]
 
+# Example
+
+`bash add_domain.bash -U reyzeer -di /home/reyzeer/repos/my_site -do "my_site.dev,/trunk/frontend/web/;my_site-admin.dev,/trunk/backend/web/"`
+
 ## Return
 
 `null`
