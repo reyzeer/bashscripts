@@ -29,6 +29,10 @@ attrs()
           cat clone_site.md
   				exit
         ;;
+        -U|--user)
+          user="$2"
+          shift # past argument
+        ;;
         -rt|--repositoryType)
           repositoryType="$2"
           shift # past argument
@@ -69,15 +73,15 @@ main()
 {
 
   printf "
-    Linux user:\t\t$USER
-    Clone/checkout in:\t$WWW_PATH
-    Repository type:\t$repositoryType
-    Repository utl:\t$repositoryUrl
-    Url type:\t$urlType
-    Framework:\t$framework
+    Linux user:\t\t\t$USER
+    Clone/checkout in:\t\t$WWW_PATH
+    Repository type:\t\t$repositoryType
+    Repository utl:\t\t$repositoryUrl
+    Url type:\t\t\t$urlType
+    Framework:\t\t\t$framework
     Framework (relative) dir:\t$frameworkDir
-    Yii2 modules:\t$modules
-    Domains:\t$domains
+    Yii2 modules:\t\t$modules
+    Domains:\t\t\t$domains
     \n"
 
   echo "All is ok?[y/n]"
@@ -87,10 +91,6 @@ main()
   then
     exit
   fi
-
-  echo "isOk ;)"
-
-  exit
 
   bash repository.bash -U $USER -d $WWW_PATH -t $repositoryType -u $repositoryUrl
 

@@ -9,7 +9,7 @@
 ## Arguments
 
 - `-h | --help` - help info
-- `-t | --type` - repository type [ `github` or `project.coop`]
+- `-t | --type` - repository type [ `github` or `projectcoop`]
 - `-u | --url` - repository address [ example: `https://github.com/reyzeer/bashscripts.git` ]
 
 ## Return
