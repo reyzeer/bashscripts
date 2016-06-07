@@ -13,13 +13,13 @@
 # $1 - string - github-git address
 function getRepoDirGithub
 {
-	echo `expr "$1" : '^https:\/\/github\.com\/.[a-z0-9]*\/\(.[a-z0-9]*\)\.git$'`
+	echo `expr "$1" : '^https:\/\/github\.com\/.[a-z0-9]*\/\(.[a-zA-Z0-9_-]*\)\.git$'`
 }
 
 # $1 - string - project.coop-svn address
 function getRepoDirProjectCoopSVN
 {
-  echo `expr "$1" : '^https:\/\/svn\.project\.coop\/svn\/\(.[a-z0-9]*\)$'`
+  echo `expr "$1" : '^https:\/\/svn\.project\.coop\/svn\/\(.[a-zA-Z0-9_-]*\)$'`
 }
 
 # $1 - string|integer - repository link type ( 1 - github | 2 - project.coop-svn )
