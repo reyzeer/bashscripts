@@ -13,10 +13,21 @@ CMD_ROOT="sudo"
 
 # --- frameworks ---
 
+# $1 - string - dir with project
+# $2 - string - modules "backend;frontend"
 yii2()
 {
 
-	
+	modules=$(echo $2 | tr ";" "\n")
+	for module in $modules
+	do
+
+		$CMD_USR mkdir ${1}/${module}/runtime
+		$CMD_USR mkdir ${1}/${module}/web/assets
+
+	done
+
+	$CMD_USR mkdir ${1}/common/runtime
 
 	$CMD_USR php init
 	$CMD_USR composer update
@@ -27,16 +38,17 @@ onlyComposer()
 	$CMD_USR composer update
 }
 
-# $1 - string|integer - check framework ( 1 - Yii2.0 | 2 - Only Composer )
-# $2 - string - dir with project
+# $1 - string - dir with project
+# $2 - string|integer - check framework ( 1 - Yii2.0 | 2 - Only Composer )
+# $3 - string - modules "backend;frontend"
 doInitFramework()
 {
 
-	cd $2
+	cd $1
 
-	case "$1" in
+	case "$2" in
 		"yii2_advanced") #Yii2.0
-			yii2
+			yii2 $1 $3
 		;;
 		"only_composer")
 			onlyComposer
@@ -86,7 +98,7 @@ attrs()
 run()
 {
 
-  doInitFramework $framework $dir
+  doInitFramework $dir $framework $modules
 
   #return
 	 #null
