@@ -1,8 +1,8 @@
 #!/bin/bash
 
 MONITOR0=0
-MONITOR1=1720
-MONITOR2=3400
+MONITOR1=2020
+MONITOR2=3960
 
 function setWindow
 {
@@ -55,4 +55,3 @@ wmctrl -s 2;
 
 #chromium-browser
 chromium-browser;
-
