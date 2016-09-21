@@ -36,8 +36,8 @@ wmctrl -s 1;
 #sleep 1;
 
 #nautilus
-nautilus &
-sleep 1;
+#nautilus &
+#sleep 1;
 
 #mysql-workbench
 #mysql-workbench &
@@ -48,7 +48,7 @@ sleep 1;
 #setWindow 1 $MONITOR2
 
 ## workspace 2 ##
-wmctrl -s 2;
+#wmctrl -s 2;
 
 #netbeans
 #/home/reyzeer/netbeans-8.1/bin/netbeans --jdkhome /usr/lib/jvm/java-8-oracle/ &
