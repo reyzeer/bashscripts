@@ -28,6 +28,11 @@ apt-get update
 
 # install
 
+# -- drivers
+
+apt-get install nvidia-current
+apt-get install nvidia-settings
+
 # - kernel/terminal
 
 apt-get install vim
@@ -72,6 +77,7 @@ apt-get install php-mbstring
 apt-get install nodejs-legacy
 apt-get install npm
 npm install apidoc -g
+npm install -g angular-cli
 
 # --- composer
 php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
@@ -89,6 +95,7 @@ apt-get install spotify-client
 apt-get install steam
 apt-get install veracrypt
 apt-get install geary
+apt-get install chromium-browser
 
 # --- gitkraken
 wget https://release.gitkraken.com/linux/gitkraken-amd64.deb
