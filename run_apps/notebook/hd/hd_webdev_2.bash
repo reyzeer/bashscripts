@@ -32,26 +32,36 @@ sleep 1;
 wmctrl -s 1;
 
 #veracrypt
-veracrypt &
-sleep 1;
+#veracrypt &
+#sleep 1;
 
 #nautilus
-nautilus &
-sleep 1;
+#nautilus &
+#sleep 1;
 
 #mysql-workbench
-mysql-workbench &
-setWindow 5 $MONITOR1
+#mysql-workbench &
+#setWindow 5 $MONITOR1
 
 #konsole
-konsole &
-setWindow 1 $MONITOR2
+#konsole &
+#setWindow 1 $MONITOR2
+
+## workspace 2 ##
+#wmctrl -s 2;
+
+#netbeans
+#/home/reyzeer/netbeans-8.1/bin/netbeans --jdkhome /usr/lib/jvm/java-8-oracle/ &
+bash ~/apps/PhpStorm-162.1889.1/bin/phpstorm.sh &
+
+#chromium-browser
+chromium-browser;
 
 ## workspace 2 ##
 wmctrl -s 2;
 
-#netbeans
-/home/reyzeer/netbeans-8.1/bin/netbeans --jdkhome /usr/lib/jvm/java-8-oracle/ &
+#chromium-browser
+chromium-browser;
 
 #chromium-browser
 chromium-browser;
