@@ -3,6 +3,9 @@
 # example:
 # sudo bash add_domain.sh -D my_domain.domain -P /var/www/my_domain/
 
+#cons
+APACHE_LOG_DIR="/home/reyzeer/WWW/logs/"
+
 # get attributes
 
 attrs()
@@ -85,8 +88,8 @@ read -r -d '' siteconf << EOM
         # modules, e.g.
         #LogLevel info ssl:warn
 
-        ErrorLog ${APACHE_LOG_DIR}/${dirName}-${module}-error.log
-        CustomLog ${APACHE_LOG_DIR}/${dirName}-${module}-access.log combined
+        ErrorLog ${APACHE_LOG_DIR}/${domain}-error.log
+        CustomLog ${APACHE_LOG_DIR}/${doamin}-access.log combined
 
         # For most configuration files from conf-available/, which are
         # enabled or disabled at a global level, it is possible to
