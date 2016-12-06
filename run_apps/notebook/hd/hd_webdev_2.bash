@@ -53,6 +53,7 @@ wmctrl -s 1;
 #netbeans
 #/home/reyzeer/netbeans-8.1/bin/netbeans --jdkhome /usr/lib/jvm/java-8-oracle/ &
 bash ~/apps/PhpStorm-162.1889.1/bin/phpstorm.sh &
+sleep 5;
 
 #chromium-browser
 chromium-browser;
