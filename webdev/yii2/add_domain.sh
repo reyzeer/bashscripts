@@ -4,7 +4,7 @@
 # sudo bash add_domain.sh -D my_domain.domain -P /var/www/my_domain/
 
 #cons
-APACHE_LOG_DIR="/home/reyzeer/WWW/logs/"
+APACHE_LOG_DIR="/home/reyzeer/www/logs/"
 
 # get attributes
 
@@ -107,4 +107,3 @@ echo "${siteconf}" >> /etc/apache2/sites-available/${domain}.conf
 a2ensite ${domain}
 
 service apache2 restart
-
