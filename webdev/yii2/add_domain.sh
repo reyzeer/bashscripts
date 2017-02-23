@@ -107,4 +107,3 @@ echo "${siteconf}" >> /etc/apache2/sites-available/${domain}.conf
 a2ensite ${domain}
 
 service apache2 restart
-
