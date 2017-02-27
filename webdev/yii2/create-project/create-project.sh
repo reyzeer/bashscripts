@@ -3,10 +3,36 @@
 # SETTINGS
 # =======================================================
 
-# Config file scheme
-CONFIG_FILE_SCHEME=EOF
+# Project config file
 
-EOF
+# Clone/create project
+NEW_PROJECT=true
+
+# Repository
+REPO_TYPE='git|svn'
+REPO_URL=''
+REPO_USER=''
+REPO_PASS=''
+
+# Repository branch
+DEV_BRANCH='master'
+
+# Privilage for Directory - chown
+RIGHTS='user:www-data'
+
+# Yii2
+ENV='Development'
+
+# Hosts
+HOSTS=("frontend.loc" "dir/frontend/web/" "backend.loc" "dir/backend/web/")
+
+# Create DB
+DB_CREATE=true
+DB_HOST='localhost'
+DB_ROOT_PASS=''
+
+# DB
+DB_HOST=''
 
 # scritp variables
 # =======================================================
@@ -14,6 +40,8 @@ g_mode=0
 g_user='orginal value'
 g_dir='orginal value'
 # =======================================================
+
+
 
 function generate_config()
 {
@@ -27,9 +55,10 @@ function generate_config()
 # Project config file
 
 # Clone/create project
-NEW_PROJECt=true
+NEW_PROJECT=true
 
 # Repository
+REPO_TYPE='git|svn'
 REPO_URL=''
 REPO_USER=''
 REPO_PASS=''
@@ -60,9 +89,38 @@ EOF
   fi
 }
 
+function clone_repository()
+{
+
+}
+
 function create_project()
 {
-  
+
+  echo 'create_project'
+
+}
+
+funciton clone_project()
+{
+  clone_repository
+}
+
+function doit()
+{
+  # load cfg settings
+  # ========================================================
+  if [[ -e "./project.cfg" ]]; then
+    source "./project.cfg"
+    if [[ $NEW_PROJECT ]]; then
+      create_project
+    else
+      clone_project
+    fi
+  else
+    echo 'Cannot find project.cfg file.'
+    exit 128
+  fi
 }
 
 function attrs()
@@ -104,15 +162,11 @@ function run()
 {
   echo "RUN g_mode: $g_mode"
   if [[ "$g_mode" == "CONFIG" ]]; then
-    echo 'RUN CONFIG'
     generate_config
   elif [[ "$g_mode" == "DOIT" ]]; then
+    doit
     echo 'RUN DOIT'
   fi
-
-  echo "g_mode: $g_mode"
-  echo "g_user: $g_user"
-  echo "g_dir: $g_dir"
 }
 
 attrs $@
