@@ -3,11 +3,17 @@
 # SETTINGS
 # =======================================================
 
+# Config file scheme
+CONFIG_FILE_SCHEME=EOF
+
+EOF
+
 # scritp variables
 # =======================================================
 g_mode=0
 g_user='orginal value'
 g_dir='orginal value'
+# =======================================================
 
 function generate_config()
 {
@@ -15,6 +21,8 @@ function generate_config()
   read -p "Are you sure? (Y/n) " -n 1 -r
   if ! [[ $REPLY =~ ^[Nn]$ ]]
   then
+
+    # --- Config file scheme ---
     cat <<EOF > project.cfg
 # Project config file
 
@@ -47,17 +55,24 @@ DB_ROOT_PASS=''
 DB_HOST=''
 
 EOF
+  # --- Config file scheme ---
+
   fi
 }
 
-ATTRS()
+function create_project()
+{
+  
+}
+
+function attrs()
 {
   while [[ $# > 0 ]]
   do
     key="$1"
     case $key in
       -c|--config)
-        g_mode=1
+        g_mode='CONFIG'
       ;;
       "-h"|"--help")
 				cat add_domain.md
@@ -71,7 +86,9 @@ ATTRS()
       	g_dir="$2"
       	shift # past argument=value
       ;;
-			-do|--domains)
+			-do|--doit)
+        echo 'DOIT!'
+        g_mode='DOIT'
 				domains="$2"
 				shift # past argument
 			;;
@@ -83,12 +100,14 @@ ATTRS()
   done
 }
 
-RUN()
+function run()
 {
-  if [[ $g_mode -eq 1 ]]; then
+  echo "RUN g_mode: $g_mode"
+  if [[ "$g_mode" == "CONFIG" ]]; then
+    echo 'RUN CONFIG'
     generate_config
-  elif [[ $g_mode -eq 2 ]]; then
-    echo 'other'
+  elif [[ "$g_mode" == "DOIT" ]]; then
+    echo 'RUN DOIT'
   fi
 
   echo "g_mode: $g_mode"
@@ -96,5 +115,5 @@ RUN()
   echo "g_dir: $g_dir"
 }
 
-ATTRS $@
-RUN
+attrs $@
+run
