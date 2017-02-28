@@ -7,12 +7,15 @@
 
 # Clone/create project
 NEW_PROJECT=true
+YII2_VERSION='2.0.11'
 
 # Repository
 REPO_TYPE='git|svn'
 REPO_URL=''
 REPO_USER=''
 REPO_PASS=''
+REPO_EMAIL=''
+REPO_DIR=''
 
 # Repository branch
 DEV_BRANCH='master'
@@ -56,12 +59,15 @@ function generate_config()
 
 # Clone/create project
 NEW_PROJECT=true
+YII2_VERSION='2.0.11'
 
 # Repository
 REPO_TYPE='git|svn'
 REPO_URL=''
 REPO_USER=''
 REPO_PASS=''
+REPO_EMAIL=''
+REPO_DIR=''
 
 # Repository branch
 DEV_BRANCH='master'
@@ -91,17 +97,56 @@ EOF
 
 function clone_repository()
 {
+  echo 'clone_repository'
+  if [[ "$REPO_TYPE" == "git" ]]; then
 
+    regexHttps='(https)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]'
+    regexHttp='(http)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]'
+
+    if [[ $REPO_URL =~ $regexHttps ]]; then
+
+      url="https://$REPO_USER:$REPO_PASS@${REPO_URL:8}"
+      git clone $url
+
+    elif [[ $REPO_URL =~ $regexHttp ]]; then
+
+      url="http://$REPO_USER:$REPO_PASS@${REPO_URL:8}"
+      git clone $url
+
+    else
+
+      echo 'Repo url isnt valid.'
+
+    fi
+
+  elif [[ "$REPO_TYPE" == "svn" ]]; then
+    echo 'svn'
+
+  else
+    echo 'Not correct repository type.'
+    exit 128
+  fi
 }
 
 function create_project()
 {
+  clone_repository
 
-  echo 'create_project'
+  #install yii2
+  composer create-project yiisoft/yii2-app-advanced advanced $YII2_VERSION
+  mv ./advanced/* ./$REPO_DIR/
+  rm -rf advanced
+
+  php init --env=${ENV} --overwrite=All
+
+  cd ./$REPO_DIR
+  git add .
+  git commit -m"Init project in Yii2"
+
 
 }
 
-funciton clone_project()
+function clone_project()
 {
   clone_repository
 }
@@ -145,7 +190,6 @@ function attrs()
       	shift # past argument=value
       ;;
 			-do|--doit)
-        echo 'DOIT!'
         g_mode='DOIT'
 				domains="$2"
 				shift # past argument
@@ -160,12 +204,10 @@ function attrs()
 
 function run()
 {
-  echo "RUN g_mode: $g_mode"
   if [[ "$g_mode" == "CONFIG" ]]; then
     generate_config
   elif [[ "$g_mode" == "DOIT" ]]; then
     doit
-    echo 'RUN DOIT'
   fi
 }
 
