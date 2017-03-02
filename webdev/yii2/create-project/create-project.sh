@@ -21,7 +21,7 @@ REPO_DIR=''
 DEV_BRANCH='master'
 
 # Privilage for Directory - chown
-RIGHTS='user:www-data'
+RIGHTS="${USER}:www-data"
 
 # Yii2
 ENV='Development'
@@ -44,7 +44,11 @@ g_user='orginal value'
 g_dir='orginal value'
 # =======================================================
 
-
+# Root/Local user
+# =======================================================
+AS_USER="sudo -u ${USER}"
+AS_ROOT='sudo'
+# =======================================================
 
 function generate_config()
 {
@@ -95,9 +99,11 @@ EOF
   fi
 }
 
+# Clones repository
 function clone_repository()
 {
-  echo 'clone_repository'
+
+  # --- GIT -------------------------------
   if [[ "$REPO_TYPE" == "git" ]]; then
 
     regexHttps='(https)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]'
@@ -106,12 +112,12 @@ function clone_repository()
     if [[ $REPO_URL =~ $regexHttps ]]; then
 
       url="https://$REPO_USER:$REPO_PASS@${REPO_URL:8}"
-      git clone $url
+      $AS_USER git clone $url
 
     elif [[ $REPO_URL =~ $regexHttp ]]; then
 
       url="http://$REPO_USER:$REPO_PASS@${REPO_URL:8}"
-      git clone $url
+      $AS_USER git clone $url
 
     else
 
@@ -119,12 +125,18 @@ function clone_repository()
 
     fi
 
+  # --- SVN -------------------------------
   elif [[ "$REPO_TYPE" == "svn" ]]; then
-    echo 'svn'
 
+    echo 'SVN isnt implemented'
+    exit 128
+
+  # --- REPO ERROR -------------------------------
   else
+
     echo 'Not correct repository type.'
     exit 128
+
   fi
 }
 
@@ -132,8 +144,8 @@ function clone_repository()
 # $2 - string - dir with project
 function add2hosts
 {
-	$CMD_ROOT echo "127.0.0.1		${1}" >> /etc/hosts
-	$CMD_ROOT echo "127.0.0.1		www.${1}" >> /etc/hosts
+	$AS_ROOT echo "127.0.0.1		${1}" >> /etc/hosts
+	$AS_ROOT echo "127.0.0.1		www.${1}" >> /etc/hosts
 }
 
 # $1 - string - domain
@@ -184,26 +196,70 @@ function add2apache
 
 EOM
 
-	$CMD_ROOT echo "${vhosts}" >> ${APACHE2_SITES_PATH}/${1}.conf
-	$CMD_ROOT a2ensite ${1}
+	$AS_ROOT echo "${vhosts}" >> ${APACHE2_SITES_PATH}/${1}.conf
+	$AS_ROOT a2ensite ${1}
 
 }
 
-function create_project()
+# Download yii2 project from yiisoft repository
+#  and clone files to $REPO_URL repo directory.
+#  Next init enviroments.
+function create_project_yii2()
 {
-  clone_repository
 
-  #install yii2
-  composer create-project yiisoft/yii2-app-advanced advanced $YII2_VERSION
-  mv ./advanced/* ./$REPO_DIR/
-  rm -rf advanced
-
-  php init --env=${ENV} --overwrite=All
+  #install yii2 (create-project and clone files to repository dir)
+  $AS_USER composer create-project yiisoft/yii2-app-advanced advanced $YII2_VERSION
+  $AS_USER mv ./advanced/* ./$REPO_DIR/
+  $AS_USER rm -rf advanced
 
   cd ./$REPO_DIR
-  git add .
-  git commit -m"Init project in Yii2"
 
+  # Standard dependencies
+  #composer --dev require ""
+
+  #init yii2 project
+  $AS_USER php init --env=${ENV} --overwrite=All
+
+  cd ../
+
+}
+
+function push_init_project()
+{
+
+  # --- GIT -------------------------------
+  if [[ "$REPO_TYPE" == "git" ]]; then
+
+    $AS_USER git add .
+    $AS_USER git commit -m"Init project in Yii2"
+    #$AS_USER git push
+
+  # --- SVN -------------------------------
+  elif [[ "$REPO_TYPE" == "svn" ]]; then
+    echo 'SVN isnt implemented'
+    exit 128
+
+  # --- REPO ERROR ------------------------
+  else
+    echo 'Not correct repository type.'
+    exit 128
+  fi
+
+}
+
+# Creates project
+# Use attributes from `project.cfg` file.
+function create_project()
+{
+
+  clone_repository
+  create_project_yii2
+
+  cd ./$REPO_DIR
+
+
+  cd ..
+  $AS_ROOT chown -R $RIGHTS $REPO_DIR
 
 }
 
@@ -212,6 +268,8 @@ function clone_project()
   clone_repository
 }
 
+# Runs clone/create repository
+# Use attributes from `project.cfg` file.
 function doit()
 {
   # load cfg settings
@@ -229,6 +287,8 @@ function doit()
   fi
 }
 
+# Sets global script variables by flags/attributes
+# $@ - array - flags/attributes
 function attrs()
 {
   while [[ $# > 0 ]]
@@ -238,7 +298,7 @@ function attrs()
       -c|--config)
         g_mode='CONFIG'
       ;;
-      "-h"|"--help")
+      -h|--help)
 				cat add_domain.md
 				exit
 			;;
@@ -263,6 +323,7 @@ function attrs()
   done
 }
 
+# Runs script
 function run()
 {
   if [[ "$g_mode" == "CONFIG" ]]; then
