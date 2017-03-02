@@ -239,7 +239,7 @@ function push_init_project()
 
     $AS_USER git add .
     $AS_USER git commit -m"Init project in Yii2"
-    #$AS_USER git push
+    $AS_USER git push
 
   # --- SVN -------------------------------
   elif [[ "$REPO_TYPE" == "svn" ]]; then
