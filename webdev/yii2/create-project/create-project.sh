@@ -27,7 +27,7 @@ RIGHTS="${USER}:www-data"
 ENV='Development'
 
 # Hosts
-HOSTS=("frontend.loc" "dir/frontend/web/" "backend.loc" "dir/backend/web/")
+HOSTS=('frontend.loc' 'frontend/web/' 'backend.loc' 'backend/web/')
 
 # Create DB
 DB_CREATE=true
@@ -36,6 +36,10 @@ DB_ROOT_PASS=''
 
 # DB
 DB_HOST=''
+
+# constants
+# =======================================================
+APACHE2_SITES_PATH=/etc/apache2/sites-available
 
 # scritp variables
 # =======================================================
@@ -50,6 +54,7 @@ AS_USER="sudo -u ${USER}"
 AS_ROOT='sudo'
 # =======================================================
 
+# Generates config
 function generate_config()
 {
   echo "This will create new project.cfg file and overwrite existing one."
@@ -140,16 +145,17 @@ function clone_repository()
   fi
 }
 
-# $1 - string - rootDir in dir
-# $2 - string - dir with project
+# Adds domain to /etc/hosts
+# $1 - string - domain
 function add2hosts
 {
-	$AS_ROOT echo "127.0.0.1		${1}" >> /etc/hosts
-	$AS_ROOT echo "127.0.0.1		www.${1}" >> /etc/hosts
+	$AS_ROOT echo "127.0.0.1 ${1} www.${1}" >> /etc/hosts
 }
 
+# Adds domain to apache2 sites
 # $1 - string - domain
 # $2 - string - path to root
+# $3 - string - path to apache_logs directory
 function add2apache
 {
 
@@ -181,8 +187,8 @@ function add2apache
         # modules, e.g.
         #LogLevel info ssl:warn
 
-        ErrorLog ${APACHE_LOG_DIR}/${1}-error.log
-        CustomLog ${APACHE_LOG_DIR}/${1}-access.log combined
+        ErrorLog ${3}/${1}-error.log
+        CustomLog ${3}/${1}-access.log combined
 
         # For most configuration files from conf-available/, which are
         # enabled or disabled at a global level, it is possible to
@@ -220,10 +226,11 @@ function create_project_yii2()
   #init yii2 project
   $AS_USER php init --env=${ENV} --overwrite=All
 
-  cd ../
+  cd ..
 
 }
 
+# Commits and pushs initialized project
 function push_init_project()
 {
 
@@ -247,6 +254,20 @@ function push_init_project()
 
 }
 
+function add_sites()
+{
+  for (( i=0; i<${#HOSTS[@]} ; i+=2 )) ;
+  do
+
+    domain=${HOSTS[i]}
+    path=${HOSTS[i+1]}
+
+    add2hosts $domain
+    add2apache $domain $(pwd)/$REPO_DIR/$path $(pwd)/apache_logs
+
+  done
+}
+
 # Creates project
 # Use attributes from `project.cfg` file.
 function create_project()
@@ -254,12 +275,14 @@ function create_project()
 
   clone_repository
   create_project_yii2
+  push_init_project
 
-  cd ./$REPO_DIR
+  mkdir apache_logs dumps auths
 
+  # set rights for repo_directory
+  $AS_ROOT chown -R $RIGHTS $REPO_DIR apache_logs
 
-  cd ..
-  $AS_ROOT chown -R $RIGHTS $REPO_DIR
+  add_sites
 
 }
 
