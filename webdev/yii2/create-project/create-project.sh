@@ -117,12 +117,12 @@ function clone_repository()
     if [[ $REPO_URL =~ $regexHttps ]]; then
 
       url="https://$REPO_USER:$REPO_PASS@${REPO_URL:8}"
-      $AS_USER git clone $url
+      git clone $url
 
     elif [[ $REPO_URL =~ $regexHttp ]]; then
 
       url="http://$REPO_USER:$REPO_PASS@${REPO_URL:8}"
-      $AS_USER git clone $url
+      git clone $url
 
     else
 
@@ -149,7 +149,7 @@ function clone_repository()
 # $1 - string - domain
 function add2hosts
 {
-	$AS_ROOT echo "127.0.0.1 ${1} www.${1}" >> /etc/hosts
+	sudo echo "127.0.0.1 ${1} www.${1}" >> /etc/hosts
 }
 
 # Adds domain to apache2 sites
@@ -202,8 +202,8 @@ function add2apache
 
 EOM
 
-	$AS_ROOT echo "${vhosts}" >> ${APACHE2_SITES_PATH}/${1}.conf
-	$AS_ROOT a2ensite ${1}
+	sudo echo "${vhosts}" >> ${APACHE2_SITES_PATH}/${1}.conf
+	sudo a2ensite ${1}
 
 }
 
@@ -214,9 +214,9 @@ function create_project_yii2()
 {
 
   #install yii2 (create-project and clone files to repository dir)
-  $AS_USER composer create-project yiisoft/yii2-app-advanced advanced $YII2_VERSION
-  $AS_USER mv ./advanced/* ./$REPO_DIR/
-  $AS_USER rm -rf advanced
+  composer create-project yiisoft/yii2-app-advanced advanced $YII2_VERSION
+  mv ./advanced/* ./$REPO_DIR/
+  rm -rf advanced
 
   cd ./$REPO_DIR
 
@@ -224,7 +224,7 @@ function create_project_yii2()
   #composer --dev require ""
 
   #init yii2 project
-  $AS_USER php init --env=${ENV} --overwrite=All
+  php init --env=${ENV} --overwrite=All
 
   cd ..
 
@@ -237,9 +237,9 @@ function push_init_project()
   # --- GIT -------------------------------
   if [[ "$REPO_TYPE" == "git" ]]; then
 
-    $AS_USER git add .
-    $AS_USER git commit -m"Init project in Yii2"
-    $AS_USER git push
+    git add .
+    git commit -m"Init project in Yii2"
+    git push
 
   # --- SVN -------------------------------
   elif [[ "$REPO_TYPE" == "svn" ]]; then
@@ -280,7 +280,7 @@ function create_project()
   mkdir apache_logs dumps auths
 
   # set rights for repo_directory
-  $AS_ROOT chown -R $RIGHTS $REPO_DIR apache_logs
+  sudo chown -R $RIGHTS $REPO_DIR apache_logs
 
   add_sites
 
